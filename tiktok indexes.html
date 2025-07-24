@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MicroVideo - TikTok Clone</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <!-- 🔥 Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+  </script>
+<style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .app-container {
+      max-width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #000;
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff0050;
+    }
+
+    .search-bar input {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: none;
+      background-color: #222;
+      color: #fff;
+      width: 300px;
+    }
+
+    .search-bar button {
+      background: none;
+      border: none;
+      color: #fff;
+      margin-left: -35px;
+      cursor: pointer;
+    }
+
+    .user-actions button {
+      padding: 8px 15px;
+      border-radius: 4px;
+      border: none;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .upload-btn {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .login-btn {
+      background-color: #ff0050;
+      color: #fff;
+    }
+
+    .video-feed {
+      flex: 1;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+    }
+
+    .video-card {
+      position: relative;
+      height: 100vh;
+      scroll-snap-align: start;
+    }
+
+    .video-card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-info {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .caption {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 20px;
+    }
+
+    .video-actions button {
+      background: none;
+      border: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .video-actions button i {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .comments-section {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 50vh;
+        background: rgba(0, 0, 0, 0.9);
+        overflow-y: auto;
+        padding: 10px;
+        border-top: 1px solid #333;
+        z-index: 20;
+        }
+
+.comments{
+    border-bottom: 1px solid #444;
+    padding: 10px 5px;
+}
+.comment-form{
+  margin-top:10px;
+  display:flex;
+}
+.comment-form input{
+  flex:1;
+  padding: 8px;
+  border:none;
+  border-radius:4px 0 0 4px;
+}
+.comment-actions {
+  display: flex;
+  gap: 10px;
+    font-size: 14px;
+  margin-top: 5px;
+}
+
+.comment-actions span {
+  cursor: pointer;
+  color: #ccc;
+}
+
+.comment-actions .liked i,
+.comment-actions .retweeted i {
+  color: #ff0050;
+}
+
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      background-color: #000;
+      border-top: 1px solid #333;
+      position: sticky;
+      bottom: 0;
+    }
+
+    .bottom-nav a {
+      color: #fff;
+      font-size: 24px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .logo {
+        margin-bottom: 10px;
+      }
+
+      .search-bar input {
+        width: 200px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .search-bar,
+      .user-actions {
+        display: none;
+      }
+    }
+
+    #video-upload {
+      display: none;
+    }
+    #uploadBtn {
+     padding:10px 20px;
+     font-weight:bold;
+     background:#0084ff;
+     color:white;
+     border:none;
+     cursor:pointer;
+     border-radius:5px;
+    }
+
+    .liked i {
+      color: #ff0050;
+    }
+    .visually-hidden {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <nav class="top-nav">
+      <div class="logo">WOLDERS</div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search..."/>
+        <button title="Search"><i class="fas fa-search"></i></button>
+      </div>
+      <div class="user-actions">
+        <a href="signup.html" class="signup-btn" id="login-btn">Sign Up</a>
+        <button id="upload-btn" class="upload-btn">Upload</button>
+      </div>
+      <label for="video-upload" class="visually-hidden">Upload video</label>
+      <input type="file" id="video-upload" accept="video/*" title="Upload video"/>
+    </nav>
+
+
+
+    <!-- Video Feed -->
+    <div class="video-feed" id="video-feed">
+
+    <div class="video-feed">
+      <!-- Example Video -->
+      <div class="video-card">
+        <video autoplay muted loop controls>
+          <source src="https://example.com/video1.mp4" type="video/mp4"/>
+        </video>
+        <div class="video-info">
+          <div class="user-info">
+            <img src="https://via.placeholder.com/40" class="user-avatar" alt="User"/>
+            <span>@username</span>
+          </div>
+          <p class="caption">This is a cool video caption #trending</p>
+          <div class="video-actions">
+            <button class="like-btn"><i class="fas fa-heart"></i> <span class="count">1200</span></button>
+            <button class="comment-btn"><i class="fas fa-comment"></i> 245</button>
+          </div>
+          <div class="comments-section" id="comments">
+            <div class="comment">
+              <strong>@user1:</strong> This is 🔥🔥🔥
+              <div class="comment-actions">
+                <span class="like-comment">❤️ 12</span>
+                <span class="retweet-comment">🔁 Retweet</span>
+              </div>
+            </div>
+            <div class="comment-form">
+              <input type="text" placeholder="Add a comment...">
+              <button class="comment-btn">post</button>
+            </div>
+            <div id="comments-list"></div>
+            <div class="comment">
+              <strong>@user2:</strong> Love this song!
+              <div class="comment-actions">
+                <span class="like-comment">❤️ 5</span>
+                <span class="retweet-comment">🔁 Retweet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button onclick="Home()"title="Home" aria-label="Home"><i class="fas fa-home"></i></button>
+      <button class="message-button" title="Messages" aria-label="Messages" onclick="window.location.href='message.html'"><i class="fas fa-envelope"></i></button>
+      <button class="profile-button" title="Profile" aria-label="Profile" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i></button>
+    </nav>
+  </div>
+
+  <script>
+    function Home() {
+      window.location.reload();
+    }
+    // Ensure playsinline for all video elements (for iOS and cross-browser support)
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('video').forEach(function(video) {
+      video.setAttribute('playsinline', '');
+    });
+    });
+
+    // Handle video upload
+    const commentBtn = document.querySelector('.comment-btn');
+    const commentsSection = document.getElementById('comments');
+    commentBtn.addEventListener('click', () => {
+      commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block';
+    });
+    // Toggle comments section visibility
+    document.querySelectorAll('.like-comment').forEach(button => {
+      button.addEventListener('click', () => {
+        const currentText = button.innerText;
+        let count = parseInt(currentText.match(/\d+/)[0]);
+        count += 1;
+        button.innerText = `❤️ ${count}`;
+      });
+    });
+    document.querySelectorAll('.retweet-comment').forEach(button => {
+      button.addEventListener('click', () => {
+        alert('Comment retweeted!');
+      });
+    });
+    // Upload video
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      document.getElementById('video-upload').click();
+    });
+
+    document.getElementById('video-upload').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        alert('Video selected: ' + file.name);
+        // Upload logic here
+      }
+    });
+
+    // Redirect to login
+    document.getElementById('login-btn').addEventListener('click', () => {
+      window.location.href = 'signup.html';
+    });
+
+    // Like button toggle
+    document.addEventListener('click', function (e) {
+      const button = e.target.closest('.like-btn');
+      if (button) {
+        const countSpan = button.querySelector('.count');
+        let count = parseInt(countSpan.textContent.replace(/,/g, '')) || 0;
+
+        if (button.classList.toggle('liked')) {
+          count += 1;
+        } else {
+          count -= 1;
+        }
+
+        countSpan.textContent = count.toLocaleString();
+      }
+    });
+
+    // Auto-play/pause based on scroll visibility
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target;
+        if (entry.isIntersecting) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.7 });
+
+    document.querySelectorAll('.video-card video').forEach(video => observer.observe(video));
+    // Comments functionality
+  // Post a comment
+  document.getElementById('post-comment').addEventListener('click', () => {
+    const text = document.getElementById('comment-text').value.trim();
+    if (!text) return;
+
+    const commentEl = document.createElement('div');
+    commentEl.classList.add('comment');
+    commentEl.innerHTML = `
+      <span class="comment-user">@you</span>
+      <span class="comment-text">${text}</span>
+      <div class="comment-actions">
+        <button class="comment-like-btn"><i class="fas fa-heart"></i> <span class="count">0</span></button>
+        <button class="comment-retweet-btn"><i class="fas fa-retweet"></i> <span class="count">0</span></button>
+      </div>
+    `;
+
+    document.getElementById('comments-list').appendChild(commentEl);
+    document.getElementById('comment-text').value = '';
+  });
+
+  // Like or retweet a comment
+  document.addEventListener('click', function (e) {
+    // Comment like
+    if (e.target.closest('.comment-like-btn')) {
+      const btn = e.target.closest('.comment-like-btn');
+      const countSpan = btn.querySelector('.count');
+      let count = parseInt(countSpan.textContent) || 0;
+      if (btn.classList.toggle('liked')) count++; else count--;
+      countSpan.textContent = count;
+    }
+
+    // Comment retweet
+    if (e.target.closest('.comment-retweet-btn')) {
+      const btn = e.target.closest('.comment-retweet-btn');
+      const countSpan = btn.querySelector('.count');
+      let count = parseInt(countSpan.textContent) || 0;
+      if (btn.classList.toggle('retweeted')) count++; else count--;
+      countSpan.textContent = count;
+    }
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      const loginBtn = document.getElementById('login-btn');
+      if (loginBtn) loginBtn.style.display = 'none';
+      const uploadBtn = document.getElementById('upload-btn');
+      if (uploadBtn) uploadBtn.style.display = 'block';
+    }
+  });
+  });
+  // Remove duplicate and invalid uploadVideo function definition
+    let lastVisible = null;
+    let loading = false;
+    async function loadVideos() {
+      if (loading) return;
+      loading = true;
+      let query = db.collection('videos').orderBy('timestamp', 'desc').limit(5);
+      if (lastVisible) query = query.startAfter(lastVisible);
+      const snapshot = await query.get();
+      lastVisible = snapshot.docs[snapshot.docs.length - 1];
+      snapshot.forEach((doc) => {
+        const video = doc.data();
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        videoCard.innerHTML = `
+          <video autoplay muted loop controls>
+            <source src="${video.url}" type="video/mp4">
+          </video>
+          <div class="video-info">
+            <div class="user-info">
+              <img src="https://via.placeholder.com/40" class="user-avatar" alt="User">
+              <span>@username</span>
+            </div>
+            <p class="caption">${video.description}</p>
+            <div class="video-actions">
+              <button class="like-btn"><i class="fas fa-heart"></i> <span class="count">${video.likes || 0}</span></button>
+              <button class="comment-btn"><i class="fas fa-comment"></i> ${video.comments || 0}</button>
+            </div>
+          </div>
+        `;
+        videoFeed.appendChild(videoCard);
+        observer.observe(videoCard.querySelector('video'));
+        const likeBtn = videoCard.querySelector('.like-btn');
+        likeBtn.addEventListener('click', () => {
+          const countSpan = likeBtn.querySelector('.count');
+          let count = parseInt(countSpan.textContent.replace(/,/g, '')) || 0;
+          if (likeBtn.classList.toggle('liked')) {
+            count += 1;
+          } else {
+            count -= 1;
+          }
+          countSpan.textContent = count.toLocaleString();
+        });
+      });
+      loading = false;
+    }
+    //infinite scroll
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadVideos();
+      }
+    });
+    loadVideos();
+  </script>
+  </body>
+</html>

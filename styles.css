@@ -1,0 +1,245 @@
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .app-container {
+      max-width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #000;
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff0050;
+    }
+
+    .search-bar input {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: none;
+      background-color: #222;
+      color: #fff;
+      width: 300px;
+    }
+
+    .search-bar button {
+      background: none;
+      border: none;
+      color: #fff;
+      margin-left: -35px;
+      cursor: pointer;
+    }
+
+    .user-actions button {
+      padding: 8px 15px;
+      border-radius: 4px;
+      border: none;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .upload-btn {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .login-btn {
+      background-color: #ff0050;
+      color: #fff;
+    }
+
+    .video-feed {
+      flex: 1;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+    }
+
+    .video-card {
+      position: relative;
+      height: 100vh;
+      scroll-snap-align: start;
+    }
+
+    .video-card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-info {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .caption {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 20px;
+    }
+
+    .video-actions button {
+      background: none;
+      border: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .video-actions button i {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .comments-section {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 50vh;
+        background: rgba(0, 0, 0, 0.9);
+        overflow-y: auto;
+        padding: 10px;
+        border-top: 1px solid #333;
+        z-index: 20;
+        }
+
+.comments{
+    border-bottom: 1px solid #444;
+    padding: 10px 5px;
+}
+.comment-form{
+  margin-top:10px;
+  display:flex;
+}
+.comment-form input{
+  flex:1;
+  padding: 8px;
+  border:none;
+  border-radius:4px 0 0 4px;
+}
+.comment-actions {
+  display: flex;
+  gap: 10px;
+    font-size: 14px;
+  margin-top: 5px;
+}
+
+.comment-actions span {
+  cursor: pointer;
+  color: #ccc;
+}
+
+.comment-actions .liked i,
+.comment-actions .retweeted i {
+  color: #ff0050;
+}
+
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      background-color: #000;
+      border-top: 1px solid #333;
+      position: sticky;
+      bottom: 0;
+    }
+
+    .bottom-nav a {
+      color: #fff;
+      font-size: 24px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .logo {
+        margin-bottom: 10px;
+      }
+
+      .search-bar input {
+        width: 200px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .search-bar,
+      .user-actions {
+        display: none;
+      }
+    }
+
+    #video-upload {
+      display: none;
+    }
+    #uploadBtn {
+     padding:10px 20px;
+     font-weight:bold;
+     background:#0084ff;
+     color:white;
+     border:none;
+     cursor:pointer;
+     border-radius:5px;
+    }
+
+    .liked i {
+      color: #ff0050;
+    }
+    .visually-hidden {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
